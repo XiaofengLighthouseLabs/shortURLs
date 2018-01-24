@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>TinyApp</title>
+  <!-- run js inside  -->
+
+</head>
+<body>
+     <% include ./partials/_header %>
+
+<!-- a dynamic table -->
+     <table style = "width: 100%">
+
+
+            <!-- <th>Short URL</th>
+            <th>Long URL</th> -->
+
+
+          <% for(let shortURL in urls) { %>
+            <tr>
+
+<!-- first colum is shortURL -->
+              <td> <a href=" ./u/<%= shortURL %>">http://localhost:8080/u/<%= shortURL %></a></td>
+
+<!-- second colum is longURL -->
+              <td><%= urls[shortURL]%></td>
+
+
+
+<!-- third colum is edit -->
+             <td> <a href="/urls/<%= shortURL  %>">edit</a></td>
+
+ <!-- forth colum is delete -->
+
+            <td>
+ <!-- post DELETE to /urls/<%= shortURL %>/delete -->
+             <form action="/urls/<%= shortURL %>/delete" method="POST" align='centre'>
+                  <label></label>
+                  <input type="submit" name="delete" value="Delete" style="width: 100%" />
+             </form>
+            </td>
+          </tr>
+          <% } %>
+
+
+     </table>
+</body>
+</html>
+
+
