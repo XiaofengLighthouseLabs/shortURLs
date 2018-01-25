@@ -11,6 +11,10 @@ app.set("view engine", "ejs")
 const bodyParser = require("body-parser");
 app.use(bodyParser.urlencoded({extended: true}));
 
+// for cookie
+var cookieParser = require('cookie-parser')
+app.use(cookieParser())
+
 // generate database
 var urlDatabase = {
   "b2xVn2": "http://www.lighthouselabs.ca",
@@ -45,20 +49,22 @@ app.get("/urls.json", (req, res) => {
 
 // add  /urls page as main page, use res.render() to pass the URL database to my _index template as database
 app.get("/urls", (req, res) => {
-  let templateVars = { urls: urlDatabase };
+  let templateVars = { urls: urlDatabase,
+  username: req.cookies["username"] };
   res.render("urls_index", templateVars);
 });
 
 //  urls/new page, pass data to _new template
 app.get("/urls/new", (req, res) => {
-  res.render("urls_new");
+  let templateVars = { username: req.cookies["username"],};
+  res.render("urls_new", templateVars);
 });
 
 
 // a new route for /urls/:id, pass data to _show template
 app.get("/urls/:id", (req, res) => {
   console.log(req.params)
-  let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id]};
+  let templateVars = { shortURL: req.params.id, longURL: urlDatabase[req.params.id], username: req.cookies["username"]};
   res.render("urls_show", templateVars);
 });
 
@@ -85,20 +91,35 @@ app.post("/urls", (req, res) => {
 });
 
 // post for delete
- app.post("/urls/:id/delete", (req, res) =>{
+app.post("/urls/:id/delete", (req, res) =>{
    // delete operation
-   delete urlDatabase[req.params.id];
- res.redirect("/urls");
- });
-
- // post for update
- app.post("/urls/:id",(req, res) =>{
-
-     urlDatabase[req.params.id] = req.body.newlongURL;
+  delete urlDatabase[req.params.id];
   res.redirect("/urls");
  });
 
+ // post for update
+app.post("/urls/:id",(req, res) =>{
 
+  urlDatabase[req.params.id] = req.body.newlongURL;
+  res.redirect("/urls");
+ });
+
+ // post for login using cookie
+app.post ('/login', (req, res) =>{
+  let name = req.body.name;
+  res.cookie("username", name);
+ // console.log(name);
+
+  res.redirect("/urls");
+  });
+
+// post for logout
+app.post ('/logout', (req, res) =>{
+  let user = req.cookies;
+  res.clearCookie("username", user.name);
+  // res.cookie(name, "Username");
+  res.redirect("/urls");
+  });
 
 
 
