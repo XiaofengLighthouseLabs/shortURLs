@@ -69,14 +69,23 @@ app.get("/urls/:id", (req, res) => {
 });
 
 // a short link to redirect shortURL to compared longURL page
-  app.get("/u/:shortURL", (req, res) => {
-   let shortURL = req.params.shortURL;
-       longURL = urlDatabase[shortURL];
-   if(! longURL){
-     res.status(404).send("NOT FOUND")
+app.get("/u/:shortURL", (req, res) => {
+  let shortURL = req.params.shortURL;
+      longURL = urlDatabase[shortURL];
+  if(! longURL){
+    res.status(404).send("NOT FOUND")
    } else{res.redirect(302, longURL);}
 
-  });
+});
+
+
+// get /register endpoint
+// app.get("/register", (req, res) =>{
+
+
+//   res.render("register");
+// })
+
 
 
 // .............for post (want someing new)
