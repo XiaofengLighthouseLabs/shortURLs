@@ -6,11 +6,31 @@
 <body>
 
   <h1>This is a Header</h1>
+<<<<<<< HEAD
     <form action="/login" method="POST">
      <input  type="text" name="name" placeholder="Username">
 
      <input type="submit" name="submitForLogin" value="Login">
    </form>
     <!-- Add your EJS code here -->
+=======
+
+
+  <!-- logic between login and logout -->
+ <% if(username) {%>
+    <%= username %>
+    <form action="/logout" method="POST">
+      <input name="logout" type="submit" value="Logout">
+    </form>
+
+  <%} else {%>
+
+    <form action="/login" method="POST">
+      <input  type="text" name="name" placeholder="Username">
+
+      <input type="submit" name="submitForLogin" value="Login">
+    </form>
+  <%}%>
+>>>>>>> feature/cookies
 </body>
 </html>
