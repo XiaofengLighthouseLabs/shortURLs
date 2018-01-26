@@ -5,20 +5,16 @@
 </head>
 <body>
 
-  <h1>This is a Header</h1>
+  <!-- <h1>This is a Header</h1> -->
+  <h3><a href="/urls/new">Create New One</a></h3>
 
-<% if(username) {%>
+  <h3><a href="/urls">Home</a></h3>
+
+  <% if(username) {%>
    <!--  <%= username %> -->
     <form action="/logout" method="POST">
       <input name="logout" type="submit" value="Logout">
     </form>
-
-  <%} else {%>
-
-
-
-
   <%}%>
-
 </body>
 </html>
