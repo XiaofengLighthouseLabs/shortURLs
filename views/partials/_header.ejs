@@ -1,34 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>shortURL</title>
+  <title></title>
 </head>
 <body>
 
   <h1>This is a Header</h1>
 
-  <!--   <form action="/login" method="POST">
-     <input  type="text" name="name" placeholder="Username">
-
-     <input type="submit" name="submitForLogin" value="Login">
-   </form>
- -->
-
-
-  <!-- logic between login and logout -->
- <% if(username) {%>
-    <%= username %>
+<% if(username) {%>
+   <!--  <%= username %> -->
     <form action="/logout" method="POST">
       <input name="logout" type="submit" value="Logout">
     </form>
 
   <%} else {%>
 
-    <!-- <form action="/login" method="POST">
-      <input  type="text" name="name" placeholder="Username">
 
-      <input type="submit" name="submitForLogin" value="Login">
-    </form> -->
+
+
   <%}%>
 
 </body>
