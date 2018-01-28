@@ -85,27 +85,38 @@ app.get("/urls", (req, res) => {
     };
     res.render("urls_index", templateVars);
   } else {
-    res.redirect("/login");
+    res.status(401).send('Error: 401: You are not authorized, Please <a href="/login"> Login </a>');
   }
 });
 //  urls/new page, pass data to _new template
 app.get("/urls/new", (req, res) => {
-  let templateVars = { username: req.session.user_id,};
-    if (req.session.user_id){
-      res.render("urls_new", templateVars);
-    } else {res.redirect("/login");
+  if (req.session.user_id){
+      let templateVars = {
+      urls: urlsForUser(req.session.user_id),
+      username: req.session.user_id
+  };
+    res.render("urls_new", templateVars);
+  } else {
+    res.status(401).send('Error: 401: You are not authorized, Please <a href="/login"> Login </a>');
   }
 });
 // a new route for /urls/:id, pass data to _show template, use form in "urls_show" template
 app.get("/urls/:id", (req, res) => {
-  let templateVars = { shortURL: req.params.id,
+   if (! urlDatabase[req.params.id]) {
+    res.status(404).send('Error: 404: Page not found. <a href="/urls"> Go Back </a>');
+    return;
+  } else if (!req.session.user_id) {
+    res.status(401).send('Error: 401: You are not authorized, Please <a href="/login"> Login </a>');
+    return;
+  } else if (urlDatabase[req.params.id]["userId"] !== req.session.user_id) {
+    res.status(403).send('Error: 403: This is not your link! Please <a href="/urls"> Go Back </a>');
+    return;
+  } else {
+    let templateVars = { shortURL: req.params.id,
                        longURL: urlDatabase[req.params.id]["longURL"],
                        username: req.session.user_id};
-    if (req.session.user_id){
     res.render("urls_show", templateVars);
-    } else {
-    res.redirect("/login");
-  }
+  };
 });
 // a short link to redirect shortURL http://localhost:8080/urlshortURL which compared longURL page
 app.get("/u/:shortURL", (req, res) => {
@@ -124,20 +135,28 @@ app.get("/login", (req, res) => {
 
 app.get("/register",(req, res) => {
   let templateVars = { username: req.session.user_id };
+  if (req.session.user_id){
+    res.redirect("/login");
+  }
   res.render("register", templateVars);
 });
 // .............for post (want someing new)
 // input longURL from ./urls/new, get the shortURL using generateRandomString function
 app.post("/urls", (req, res) => {
-  var longURL = req.body.longURL;
-  let shortURL = generateRandomString();
+  if (req.session.user_id){
+    var longURL = req.body.longURL;
+    let shortURL = generateRandomString();
   // console.log(longURL, shortURL);
   // console.log(urlDatabase);
   // add this in the urlDatabase
-  urlDatabase[shortURL] = { longURL:req.body.longURL,
+    urlDatabase[shortURL] = { longURL:req.body.longURL,
                             userId: req.session.user_id };
-  // show on the ./urls/${shortURL}
-  res.redirect(`/urls/${shortURL}`);
+    // show on the ./urls/${shortURL}
+    res.redirect(`/urls/${shortURL}`);
+  } else {
+    res.status(401).send('Error: 401: You are not authorized, Please <a href="/login"> Login </a>');
+  }
+
 });
 // post for delete
 app.post("/urls/:id/delete", (req, res) => {
@@ -150,12 +169,19 @@ app.post("/urls/:id/delete", (req, res) => {
  });
  // post for update
 app.post("/urls/:id",(req, res) => {
-  if (urlDatabase[req.params.id]["userId"] === req.session.user_id) {
+  if (! urlDatabase[req.params.id]) {
+    res.status(404).send('Error: 404: Page not found. <a href="/urls"> Go Back </a>');
+    return;
+  } else if (!req.session.user_id) {
+    res.status(401).send('Error: 401: You are not authorized, Please <a href="/login"> Login </a>');
+    return;
+  } else if (urlDatabase[req.params.id]["userId"] !== req.session.user_id) {
+    res.status(403).send('Error: 403: This is not your link! Please <a href="/"> Go Back </a>');
+    return;
+  } else {
     urlDatabase[req.params.id]["longURL"] = req.body.newlongURL;
     res.redirect("/urls");
-  } else {
-    res.send("Not allowed");
-  }
+  };
  });
 
  // post for login using cookie
